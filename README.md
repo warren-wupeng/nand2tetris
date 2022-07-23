@@ -1,9 +1,9 @@
 # nand2tetris
 build computer start from nand gate
 
-treeview
+completed chips
 
 
-And
+And Or
 Not 
 Nand
