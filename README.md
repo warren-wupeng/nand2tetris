@@ -4,8 +4,9 @@ build computer start from nand gate
 completed chips
 
 
-Or8Way
 Not16 And16 Or16
+Or8Way
+Mux DMux
 Xor
 And Or
 Not 
