@@ -5,6 +5,7 @@ completed chips
 
 
 Not16 And16 Or16 Mux16
+DMux8Way
 Or8Way DMux4Way
 Mux DMux
 Xor
