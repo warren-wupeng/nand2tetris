@@ -4,6 +4,8 @@ build computer start from nand gate
 completed chips
 
 ## project 02
+
+Inc16
 FullAdder
 HalfAdder
 
