@@ -3,6 +3,9 @@ build computer start from nand gate
 
 completed chips
 
+## project 03
+Bit
+
 ## project 02
 ALU
 And16
