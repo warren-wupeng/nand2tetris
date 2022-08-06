@@ -4,6 +4,8 @@ build computer start from nand gate
 completed chips
 
 ## project 03
+RAM8
+Register
 Bit
 
 ## project 02
