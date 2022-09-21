@@ -22,9 +22,9 @@ class Dff(Clocked):
         self.o = self.i
 
 
-diff = Dff()
-diff.input(True)
-assert diff.output() is False
-diff.ontick()
-diff.ontock()
-assert diff.output() is True
+dff = Dff()
+dff.input(True)
+assert dff.output() is False
+dff.ontick()
+dff.ontock()
+assert dff.output() is True
