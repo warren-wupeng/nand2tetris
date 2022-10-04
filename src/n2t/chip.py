@@ -1,22 +1,98 @@
 import abc
 
-from collections import defaultdict
+from typing import NewType, Any, Optional
+
+PinName = NewType('PinName', str)
+
+
+class BitInt:
+    def __init__(self, value: int = 0):
+        assert value in (0, 1)
+        self.value = value
+
+    def __and__(self, other):
+        result = BitInt(self.value & other.value)
+        return result
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __invert__(self):
+        return BitInt(0 if self.value else 1)
+
+
+def test_bit_int():
+    assert BitInt(0) & BitInt(0) == BitInt(0)
+    assert BitInt(0) & BitInt(1) == BitInt(0)
+    assert BitInt(1) & BitInt(0) == BitInt(0)
+    assert BitInt(1) & BitInt(1) == BitInt(1)
+
+
+class Pin:
+
+    def __init__(self, name: PinName):
+        self.name = name
+        self._value: BitInt = BitInt()
+        self.wired_pins: list[tuple[Any, PinName]] = []
+
+    @property
+    def value(self) -> BitInt:
+        return self._value
+
+    @value.setter
+    def value(self, value: BitInt):
+        self._value = value
+        for chip, pin_name in self.wired_pins:
+            chip.set(pin_name, value)
+
+
+class Pins:
+
+    def __init__(self, *args: Pin):
+        self._data = {p.name: p for p in args}
+
+    def get(self, pin: PinName) -> Optional[Pin]:
+        return self._data.get(pin)
+
+    def __getitem__(self, pin: PinName) -> Pin:
+        result = self._data.get(pin)
+        if not result:
+            raise KeyError(f'{pin} not exit')
+        else:
+            return result
+
+    def set(self, pin: PinName, value: BitInt):
+        self._data[pin].value = value
 
 
 class Chip(abc.ABC):
 
     def __init__(self) -> None:
-        self.wires: dict[str, list[tuple[object, str]]] = defaultdict(list)
+        self.in_pins = Pins()
+        self.out_pins = Pins()
 
-    def set(self, pin: str, value: int):
-        assert value in (0, 1)
-        setattr(self, pin, value)
-    
-    def wire(self, pin: str, to: object, to_pin: str):
-        self.wires[pin].append((to, to_pin))
+    def set(self, pin_name: PinName, value: BitInt):
+        if pin := self.in_pins.get(pin_name):
+            pin.value = value
+        elif pin := self.out_pins.get(pin_name):
+            pin.value = value
+        else:
+            raise ValueError('pin not found')
+
+    def wire(self, pin_name: PinName, chip: Any, to_pin: PinName):
+        if pin := self.in_pins.get(pin_name):
+            pin.wired_pins.append((chip, to_pin))
+        elif pin := self.out_pins.get(pin_name):
+            pin.wired_pins.append((chip, to_pin))
+        else:
+            raise ValueError('pin not found')
 
     def eval(self):
         raise NotImplementedError
 
     def output(self):
         raise NotImplementedError
+
+
+if __name__ == '__main__':
+    test_bit_int()

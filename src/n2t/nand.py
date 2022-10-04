@@ -1,44 +1,41 @@
-from .chip import Chip
+from n2t.chip import Chip, PinName, Pin, Pins, BitInt
 
 
 class Nand(Chip):
     """Nand Gate
-    >>> from itertools import product
-    >>> chip = Nand()
-    >>> for a, b in product((0,1),(0,1)):
-    ...    chip.set('a', a)
-    ...    chip.set('b', b)
-    ...    chip.eval()
-    ...    chip.output()
-    1
-    1
-    1
-    0
     """
+    pin_a_name = PinName('a')
+    pin_b_name = PinName('b')
+    pin_out_name = PinName('out')
 
     def __init__(self) -> None:
         super().__init__()
-        self.a = None
-        self.b = None
-        self.out = None
-    
-    def eval(self):
-        self.out = int(not (self.a and self.b))
-    
-    def output(self):
-        return self.out
+        self.in_pins = Pins(Pin(self.pin_a_name), Pin(self.pin_b_name))
+        self.out_pins = Pins(Pin(self.pin_out_name))
 
-    @property
-    def out(self):
-        return self._out
-    
-    @out.setter
-    def out(self, value):
-        self._out = value
-        for chip, pin in self.wires['out']:
-            setattr(chip, pin, value)
+    def eval(self):
+        pin_a_value = self.in_pins[self.pin_a_name].value
+        pin_b_value = self.in_pins[self.pin_b_name].value
+        self.out_pins[self.pin_out_name].value = ~ (pin_a_value & pin_b_value)
+
+    def output(self):
+        return self.out_pins[self.pin_out_name].value
+
+
+def run_all_nand_test_cases():
+    test_nand(BitInt(0), BitInt(0), BitInt(1))
+    test_nand(BitInt(0), BitInt(1), BitInt(1))
+    test_nand(BitInt(1), BitInt(0), BitInt(1))
+    test_nand(BitInt(1), BitInt(1), BitInt(0))
+
+
+def test_nand(a: BitInt, b: BitInt, expected_out: BitInt):
+    chip = Nand()
+    chip.set(Nand.pin_a_name, a)
+    chip.set(Nand.pin_b_name, b)
+    chip.eval()
+    assert chip.output() == expected_out
 
 
 if __name__ == '__main__':
-    from doctest import testmod
-    testmod()
+    run_all_nand_test_cases()
