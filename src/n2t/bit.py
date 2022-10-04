@@ -5,12 +5,7 @@ from dff import Dff
 
 class Bit(Chip, Clocked):
     """Bit
-    >>> chip = Bit()
-    >>> chip.set('i', 0)
-    >>> chip.set('load', 0)
-    >>> chip.tick()
-    >>> chip.output()
-    0
+
     """
 
     def __init__(self) -> None:
@@ -22,7 +17,15 @@ class Bit(Chip, Clocked):
         pass
 
     def tock(self):
-        
+        pass
+
+def test_bit():
+    chip = Bit()
+    chip.set('i', 0)
+    chip.set('load', 0)
+    chip.tick()
+    chip.output()
+
 
 if __name__ == '__main__':
     from doctest import testmod

@@ -1,6 +1,6 @@
 from n2t.chip import Chip, BitInt, PinName, Pins, Pin
 from n2t.not_gate import Not
-from n2t.nand import Nand
+from n2t.nand_gate import Nand
 
 
 class And(Chip):

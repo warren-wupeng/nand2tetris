@@ -9,7 +9,6 @@ class Nand(Chip):
     pin_out_name = PinName('out')
 
     def __init__(self) -> None:
-        super().__init__()
         self.in_pins = Pins(Pin(self.pin_a_name), Pin(self.pin_b_name))
         self.out_pins = Pins(Pin(self.pin_out_name))
 

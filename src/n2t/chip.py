@@ -67,9 +67,8 @@ class Pins:
 
 class Chip(abc.ABC):
 
-    def __init__(self) -> None:
-        self.in_pins = Pins()
-        self.out_pins = Pins()
+    in_pins: Pins
+    out_pins: Pins
 
     def set(self, pin_name: PinName, value: BitInt):
         if pin := self.in_pins.get(pin_name):
