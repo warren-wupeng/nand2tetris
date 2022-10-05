@@ -21,9 +21,6 @@ class Nand(Chip):
         pin_b_value = self.pins[self.pin_b].value
         self.pins[self.pin_out].value = ~ (pin_a_value & pin_b_value)
 
-    def output(self):
-        return self.pins[self.pin_out].value
-
 
 def run_all_nand_test_cases():
     test_nand(BitInt(0), BitInt(0), BitInt(1))
@@ -37,7 +34,7 @@ def test_nand(a: BitInt, b: BitInt, expected_out: BitInt):
     chip.set(Nand.pin_a, a)
     chip.set(Nand.pin_b, b)
     chip.eval()
-    assert chip.output() == expected_out
+    assert chip.output()[Nand.pin_out] == expected_out
 
 
 if __name__ == '__main__':

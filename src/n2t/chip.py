@@ -61,6 +61,10 @@ class Pins:
         else:
             return result
 
+    def __iter__(self):
+        for pin in self._data.values():
+            yield pin
+
     def set(self, pin: PinName, value: BitInt):
         self._data[pin].value = value
 
@@ -95,8 +99,8 @@ class Chip(abc.ABC):
     def eval(self):
         raise NotImplementedError
 
-    def output(self):
-        raise NotImplementedError
+    def output(self) -> dict[PinName, BitInt]:
+        return {p.name: p.value for p in self.pins}
 
 
 if __name__ == '__main__':

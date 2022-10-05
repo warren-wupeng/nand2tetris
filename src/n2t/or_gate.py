@@ -19,8 +19,8 @@ class Or(Chip):
         self.not_gate_b = Not()
         self.nand = Nand()
 
-        self.wire(self.pin_a, self.not_gate_a, Not.pin_i)
-        self.wire(self.pin_b, self.not_gate_b, Not.pin_i)
+        self.wire(self.pin_a, self.not_gate_a, Not.pin_in)
+        self.wire(self.pin_b, self.not_gate_b, Not.pin_in)
         self.not_gate_a.wire(Not.pin_out, self.nand, Nand.pin_a)
         self.not_gate_b.wire(Not.pin_out, self.nand, Nand.pin_b)
         self.nand.wire(Nand.pin_out, self, self.pin_out)
@@ -29,9 +29,6 @@ class Or(Chip):
         self.not_gate_a.eval()
         self.not_gate_b.eval()
         self.nand.eval()
-
-    def output(self):
-        return self.pins[self.pin_out].value
 
 
 def run_all_or_test_cases():
@@ -46,7 +43,7 @@ def test_or(a: BitInt, b: BitInt, expected_out: BitInt):
     chip.set(Or.pin_a, a)
     chip.set(Or.pin_b, b)
     chip.eval()
-    assert chip.output() == expected_out
+    assert chip.output()[Or.pin_out] == expected_out
 
 
 if __name__ == '__main__':

@@ -19,15 +19,12 @@ class And(Chip):
 
         self.wire(self.pin_a, self.nand, Nand.pin_a)
         self.wire(self.pin_b, self.nand, Nand.pin_b)
-        self.nand.wire(Nand.pin_out, self.not_gate, Not.pin_i)
+        self.nand.wire(Nand.pin_out, self.not_gate, Not.pin_in)
         self.not_gate.wire(Not.pin_out, self, self.pin_out)
 
     def eval(self):
         self.nand.eval()
         self.not_gate.eval()
-
-    def output(self):
-        return self.pins[self.pin_out].value
 
 
 def test_and(a: BitInt, b: BitInt, expected_out: BitInt):
@@ -35,7 +32,7 @@ def test_and(a: BitInt, b: BitInt, expected_out: BitInt):
     chip.set(And.pin_a, a)
     chip.set(And.pin_b, b)
     chip.eval()
-    assert chip.output() == expected_out
+    assert chip.output()[And.pin_out] == expected_out
 
 
 def run_all_and_test_cases():

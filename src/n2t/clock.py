@@ -1,23 +1,24 @@
 from abc import ABC
 
-# class Clock:
+from n2t.chip import Chip
 
-#     def __init__(self) -> None:
-#         self.time = 0
-#         self._tick = False
 
-#     def tick(self):
-#         if not self._tick:
-#             self._tick = True
-    
-#     def tock(self):
-#         if self._tick:
-#             self.time += 1
+class ClockedChip(Chip, ABC):
 
-class Clocked(ABC):
+    def __init__(self):
+        super().__init__()
+        self.time = 0
+        self.plus = ''
 
     def tick(self):
-        raise NotImplementedError
+        assert not self.plus
+        self.plus = '+'
 
     def tock(self):
-        raise NotImplementedError
+        assert self.plus
+        self.eval()
+        self.plus = ''
+
+    def output(self) -> dict:
+        result = {'time': f'{self.time}{self.plus}'} | super().output()
+        return result

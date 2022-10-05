@@ -35,9 +35,6 @@ class Mux(Chip):
         self.and_gate2.eval()
         self.or_gate.eval()
 
-    def output(self):
-        return self.pins[self.pin_out].value
-
 
 def test_mux(a: BitInt, b: BitInt, sel: BitInt, expected_out: BitInt):
     chip = Mux()
@@ -45,7 +42,7 @@ def test_mux(a: BitInt, b: BitInt, sel: BitInt, expected_out: BitInt):
     chip.set(Mux.pin_b, b)
     chip.set(Mux.pin_sel, sel)
     chip.eval()
-    assert chip.output() == expected_out
+    assert chip.output()[Mux.pin_out] == expected_out
 
 
 def run_all_test_cases():
