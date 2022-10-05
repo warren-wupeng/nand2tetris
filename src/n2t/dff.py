@@ -1,49 +1,47 @@
 from clock import Clocked
-from chip import Chip
-
+from chip import Chip, BitInt, PinName, Pins, Pin
 
 
 class Dff(Chip, Clocked):
     """Dff
-    >>> chip = Dff()
-    >>> chip.set('i', 0)
-    >>> chip.tick()
-    >>> chip.output()
-    0
-    >>> chip.tock()
-    >>> chip.output()
-    0
-    >>> chip.set('i', 1)
-    >>> chip.tick()
-    >>> chip.output()
-    0
-    >>> chip.tock()
-    >>> chip.output()
-    1
-    >>> chip.tick()
-    >>> chip.output()
-    1
-    >>> chip.tock()
-    >>> chip.output()
-    1
+
     """
+    pin_i = PinName('i')
+    pin_out = PinName('out')
+
+    in_pins = (pin_i,)
+    out_pins = (pin_out,)
 
     def __init__(self) -> None:
-        self.i = 0
-        self.o = 0
-        
+        super().__init__()
+
+    def eval(self):
+        self.pins[self.pin_out].value = self.pins[self.pin_i].value
 
     def output(self):
-        return self.o
+        return self.pins[self.pin_out].value
 
     def tick(self):
         pass
 
     def tock(self):
-        self.o = self.i
+        self.eval()
+
+
+def test_dff(i: BitInt, expected_tick_out: BitInt, expected_tock_out: BitInt):
+    chip = Dff()
+    chip.set(Dff.pin_i, i)
+    chip.tick()
+    assert chip.output() == expected_tick_out
+    chip.tock()
+    assert chip.output() == expected_tock_out
+
+
+def run_all_test_cases():
+    test_dff(BitInt(0), BitInt(0), BitInt(0))
+    test_dff(BitInt(1), BitInt(0), BitInt(1))
 
 
 if __name__ == '__main__':
-    from doctest import testmod
-    testmod()
+    run_all_test_cases()
 

@@ -6,24 +6,24 @@ from n2t.not_gate import Not
 
 class Or(Chip):
     """Or Gate"""
-    pin_a_name = PinName('a')
-    pin_b_name = PinName('b')
-    pin_out_name = PinName('out')
+    pin_a = PinName('a')
+    pin_b = PinName('b')
+    pin_out = PinName('out')
+
+    in_pins = (pin_a, pin_b)
+    out_pins = (pin_out,)
 
     def __init__(self) -> None:
         super().__init__()
-        self.in_pins = Pins(Pin(self.pin_a_name), Pin(self.pin_b_name))
-        self.out_pins = Pins(Pin(self.pin_out_name))
-
         self.not_gate_a = Not()
         self.not_gate_b = Not()
         self.nand = Nand()
 
-        self.wire(self.pin_a_name, self.not_gate_a, Not.pin_i_name)
-        self.wire(self.pin_b_name, self.not_gate_b, Not.pin_i_name)
-        self.not_gate_a.wire(Not.pin_out_name, self.nand, Nand.pin_a_name)
-        self.not_gate_b.wire(Not.pin_out_name, self.nand, Nand.pin_b_name)
-        self.nand.wire(Nand.pin_out_name, self, self.pin_out_name)
+        self.wire(self.pin_a, self.not_gate_a, Not.pin_i)
+        self.wire(self.pin_b, self.not_gate_b, Not.pin_i)
+        self.not_gate_a.wire(Not.pin_out, self.nand, Nand.pin_a)
+        self.not_gate_b.wire(Not.pin_out, self.nand, Nand.pin_b)
+        self.nand.wire(Nand.pin_out, self, self.pin_out)
 
     def eval(self):
         self.not_gate_a.eval()
@@ -31,7 +31,7 @@ class Or(Chip):
         self.nand.eval()
 
     def output(self):
-        return self.out_pins[self.pin_out_name].value
+        return self.pins[self.pin_out].value
 
 
 def run_all_or_test_cases():
@@ -43,8 +43,8 @@ def run_all_or_test_cases():
 
 def test_or(a: BitInt, b: BitInt, expected_out: BitInt):
     chip = Or()
-    chip.set(Or.pin_a_name, a)
-    chip.set(Or.pin_b_name, b)
+    chip.set(Or.pin_a, a)
+    chip.set(Or.pin_b, b)
     chip.eval()
     assert chip.output() == expected_out
 

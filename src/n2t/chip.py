@@ -65,23 +65,29 @@ class Pins:
         self._data[pin].value = value
 
 
+class PinNames:
+    in_pins = ('a', 'b')
+    out_pins = ('out',)
+
+
 class Chip(abc.ABC):
 
-    in_pins: Pins
-    out_pins: Pins
+    in_pins: tuple[PinName]
+    out_pins: tuple[PinName]
+    pins: Pins
+
+    def __init__(self) -> None:
+        all_pins = (Pin(x) for x in self.in_pins+self.out_pins)
+        self.pins = Pins(*all_pins)
 
     def set(self, pin_name: PinName, value: BitInt):
-        if pin := self.in_pins.get(pin_name):
-            pin.value = value
-        elif pin := self.out_pins.get(pin_name):
+        if pin := self.pins.get(pin_name):
             pin.value = value
         else:
             raise ValueError('pin not found')
 
     def wire(self, pin_name: PinName, chip: Any, to_pin: PinName):
-        if pin := self.in_pins.get(pin_name):
-            pin.wired_pins.append((chip, to_pin))
-        elif pin := self.out_pins.get(pin_name):
+        if pin := self.pins.get(pin_name):
             pin.wired_pins.append((chip, to_pin))
         else:
             raise ValueError('pin not found')

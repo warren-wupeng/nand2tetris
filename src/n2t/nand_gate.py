@@ -1,24 +1,28 @@
 from n2t.chip import Chip, PinName, Pin, Pins, BitInt
-
+from collections import namedtuple
+from enum import Enum
 
 class Nand(Chip):
     """Nand Gate
     """
-    pin_a_name = PinName('a')
-    pin_b_name = PinName('b')
-    pin_out_name = PinName('out')
+
+    pin_a = PinName('a')
+    pin_b = PinName('b')
+    pin_out = PinName('out')
+
+    in_pins: tuple[PinName] = (pin_a, pin_b)
+    out_pins: tuple[PinName] = (pin_out,)
 
     def __init__(self) -> None:
-        self.in_pins = Pins(Pin(self.pin_a_name), Pin(self.pin_b_name))
-        self.out_pins = Pins(Pin(self.pin_out_name))
+        super().__init__()
 
     def eval(self):
-        pin_a_value = self.in_pins[self.pin_a_name].value
-        pin_b_value = self.in_pins[self.pin_b_name].value
-        self.out_pins[self.pin_out_name].value = ~ (pin_a_value & pin_b_value)
+        pin_a_value = self.pins[self.pin_a].value
+        pin_b_value = self.pins[self.pin_b].value
+        self.pins[self.pin_out].value = ~ (pin_a_value & pin_b_value)
 
     def output(self):
-        return self.out_pins[self.pin_out_name].value
+        return self.pins[self.pin_out].value
 
 
 def run_all_nand_test_cases():
@@ -30,8 +34,8 @@ def run_all_nand_test_cases():
 
 def test_nand(a: BitInt, b: BitInt, expected_out: BitInt):
     chip = Nand()
-    chip.set(Nand.pin_a_name, a)
-    chip.set(Nand.pin_b_name, b)
+    chip.set(Nand.pin_a, a)
+    chip.set(Nand.pin_b, b)
     chip.eval()
     assert chip.output() == expected_out
 
