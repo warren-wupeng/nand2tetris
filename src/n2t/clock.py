@@ -16,6 +16,7 @@ class ClockedChip(Chip, ABC):
 
     def tock(self):
         assert self.plus
+        self.time += 1
         self.eval()
         self.plus = ''
 

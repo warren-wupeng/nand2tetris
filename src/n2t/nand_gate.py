@@ -1,4 +1,4 @@
-from n2t.chip import Chip, PinName, Pin, Pins, BitInt
+from n2t.chip import Chip, PinName, Pin, Pins, BinaryBit
 from collections import namedtuple
 from enum import Enum
 
@@ -23,13 +23,13 @@ class Nand(Chip):
 
 
 def run_all_nand_test_cases():
-    test_nand(BitInt(0), BitInt(0), BitInt(1))
-    test_nand(BitInt(0), BitInt(1), BitInt(1))
-    test_nand(BitInt(1), BitInt(0), BitInt(1))
-    test_nand(BitInt(1), BitInt(1), BitInt(0))
+    test_nand(BinaryBit(0), BinaryBit(0), BinaryBit(1))
+    test_nand(BinaryBit(0), BinaryBit(1), BinaryBit(1))
+    test_nand(BinaryBit(1), BinaryBit(0), BinaryBit(1))
+    test_nand(BinaryBit(1), BinaryBit(1), BinaryBit(0))
 
 
-def test_nand(a: BitInt, b: BitInt, expected_out: BitInt):
+def test_nand(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
     chip = Nand()
     chip.set(Nand.pin_a, a)
     chip.set(Nand.pin_b, b)

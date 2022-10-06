@@ -1,5 +1,5 @@
 from n2t.and_gate import And
-from n2t.chip import BitInt, Chip, PinName, Pins, Pin
+from n2t.chip import BinaryBit, Chip, PinName, Pins, Pin
 from n2t.nand_gate import Nand
 from n2t.not_gate import Not
 
@@ -32,13 +32,13 @@ class Or(Chip):
 
 
 def run_all_or_test_cases():
-    test_or(BitInt(0), BitInt(0), BitInt(0))
-    test_or(BitInt(0), BitInt(1), BitInt(1))
-    test_or(BitInt(1), BitInt(0), BitInt(1))
-    test_or(BitInt(1), BitInt(1), BitInt(1))
+    test_or(BinaryBit(0), BinaryBit(0), BinaryBit(0))
+    test_or(BinaryBit(0), BinaryBit(1), BinaryBit(1))
+    test_or(BinaryBit(1), BinaryBit(0), BinaryBit(1))
+    test_or(BinaryBit(1), BinaryBit(1), BinaryBit(1))
 
 
-def test_or(a: BitInt, b: BitInt, expected_out: BitInt):
+def test_or(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
     chip = Or()
     chip.set(Or.pin_a, a)
     chip.set(Or.pin_b, b)

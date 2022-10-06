@@ -5,42 +5,42 @@ from typing import NewType, Any, Optional
 PinName = NewType('PinName', str)
 
 
-class BitInt:
+class BinaryBit:
     def __init__(self, value: int = 0):
         assert value in (0, 1)
         self.value = value
 
     def __and__(self, other):
-        result = BitInt(self.value & other.value)
+        result = BinaryBit(self.value & other.value)
         return result
 
     def __eq__(self, other):
         return self.value == other.value
 
     def __invert__(self):
-        return BitInt(0 if self.value else 1)
+        return BinaryBit(0 if self.value else 1)
 
 
 def test_bit_int():
-    assert BitInt(0) & BitInt(0) == BitInt(0)
-    assert BitInt(0) & BitInt(1) == BitInt(0)
-    assert BitInt(1) & BitInt(0) == BitInt(0)
-    assert BitInt(1) & BitInt(1) == BitInt(1)
+    assert BinaryBit(0) & BinaryBit(0) == BinaryBit(0)
+    assert BinaryBit(0) & BinaryBit(1) == BinaryBit(0)
+    assert BinaryBit(1) & BinaryBit(0) == BinaryBit(0)
+    assert BinaryBit(1) & BinaryBit(1) == BinaryBit(1)
 
 
 class Pin:
 
     def __init__(self, name: PinName):
         self.name = name
-        self._value: BitInt = BitInt()
+        self._value: BinaryBit = BinaryBit()
         self.wired_pins: list[tuple[Any, PinName]] = []
 
     @property
-    def value(self) -> BitInt:
+    def value(self) -> BinaryBit:
         return self._value
 
     @value.setter
-    def value(self, value: BitInt):
+    def value(self, value: BinaryBit):
         self._value = value
         for chip, pin_name in self.wired_pins:
             chip.set(pin_name, value)
@@ -65,7 +65,7 @@ class Pins:
         for pin in self._data.values():
             yield pin
 
-    def set(self, pin: PinName, value: BitInt):
+    def set(self, pin: PinName, value: BinaryBit):
         self._data[pin].value = value
 
 
@@ -84,7 +84,7 @@ class Chip(abc.ABC):
         all_pins = (Pin(x) for x in self.in_pins+self.out_pins)
         self.pins = Pins(*all_pins)
 
-    def set(self, pin_name: PinName, value: BitInt):
+    def set(self, pin_name: PinName, value: BinaryBit):
         if pin := self.pins.get(pin_name):
             pin.value = value
         else:
@@ -99,7 +99,7 @@ class Chip(abc.ABC):
     def eval(self):
         raise NotImplementedError
 
-    def output(self) -> dict[PinName, BitInt]:
+    def output(self) -> dict[PinName, BinaryBit]:
         return {p.name: p.value for p in self.pins}
 
 

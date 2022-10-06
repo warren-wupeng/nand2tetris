@@ -1,4 +1,4 @@
-from n2t.chip import Chip, BitInt, PinName, Pins, Pin
+from n2t.chip import Chip, BinaryBit, PinName, Pins, Pin
 from n2t.not_gate import Not
 from n2t.nand_gate import Nand
 
@@ -27,7 +27,7 @@ class And(Chip):
         self.not_gate.eval()
 
 
-def test_and(a: BitInt, b: BitInt, expected_out: BitInt):
+def test_and(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
     chip = And()
     chip.set(And.pin_a, a)
     chip.set(And.pin_b, b)
@@ -36,10 +36,10 @@ def test_and(a: BitInt, b: BitInt, expected_out: BitInt):
 
 
 def run_all_and_test_cases():
-    test_and(BitInt(0), BitInt(0), BitInt(0))
-    test_and(BitInt(0), BitInt(1), BitInt(0))
-    test_and(BitInt(1), BitInt(0), BitInt(0))
-    test_and(BitInt(1), BitInt(1), BitInt(1))
+    test_and(BinaryBit(0), BinaryBit(0), BinaryBit(0))
+    test_and(BinaryBit(0), BinaryBit(1), BinaryBit(0))
+    test_and(BinaryBit(1), BinaryBit(0), BinaryBit(0))
+    test_and(BinaryBit(1), BinaryBit(1), BinaryBit(1))
 
 
 if __name__ == '__main__':
