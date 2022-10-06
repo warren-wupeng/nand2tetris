@@ -1,16 +1,13 @@
-from n2t.chip import Chip, BinaryBit, PinName, Pins, Pin
-from n2t.not_gate import Not
-from n2t.nand_gate import Nand
+from n2t.chip import Chip, Bit, PinName
+from n2t.logic.not_gate import Not
+from n2t.logic.nand_gate import Nand
+from n2t.logic.unary import UnaryOperation
 
 
-class And(Chip):
-    """And Gate"""
-    pin_a = PinName('a')
-    pin_b = PinName('b')
-    pin_out = PinName('out')
-
-    in_pins = (pin_a, pin_b)
-    out_pins = (pin_out,)
+class And(UnaryOperation):
+    """And Gate
+    a and b = not (a nand b)
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -27,7 +24,7 @@ class And(Chip):
         self.not_gate.eval()
 
 
-def test_and(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
+def test_and(a: Bit, b: Bit, expected_out: Bit):
     chip = And()
     chip.set(And.pin_a, a)
     chip.set(And.pin_b, b)
@@ -36,10 +33,10 @@ def test_and(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
 
 
 def run_all_and_test_cases():
-    test_and(BinaryBit(0), BinaryBit(0), BinaryBit(0))
-    test_and(BinaryBit(0), BinaryBit(1), BinaryBit(0))
-    test_and(BinaryBit(1), BinaryBit(0), BinaryBit(0))
-    test_and(BinaryBit(1), BinaryBit(1), BinaryBit(1))
+    test_and(Bit(0), Bit(0), Bit(0))
+    test_and(Bit(0), Bit(1), Bit(0))
+    test_and(Bit(1), Bit(0), Bit(0))
+    test_and(Bit(1), Bit(1), Bit(1))
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 from clock import ClockedChip
-from chip import Chip, BinaryBit, PinName, Pins, Pin
+from chip import Bit, PinName
 
 
 class Dff(ClockedChip):
@@ -19,7 +19,9 @@ class Dff(ClockedChip):
         self.pins[self.pin_out].value = self.pins[self.pin_in].value
 
 
-def test_dff(i: BinaryBit, expected_tick_out: BinaryBit, expected_tock_out: BinaryBit):
+def test_dff(
+        i: Bit, expected_tick_out: Bit, expected_tock_out: Bit
+):
     chip = Dff()
     chip.set(Dff.pin_in, i)
     chip.tick()
@@ -29,10 +31,9 @@ def test_dff(i: BinaryBit, expected_tick_out: BinaryBit, expected_tock_out: Bina
 
 
 def run_all_test_cases():
-    test_dff(BinaryBit(0), BinaryBit(0), BinaryBit(0))
-    test_dff(BinaryBit(1), BinaryBit(0), BinaryBit(1))
+    test_dff(Bit(0), Bit(0), Bit(0))
+    test_dff(Bit(1), Bit(0), Bit(1))
 
 
 if __name__ == '__main__':
     run_all_test_cases()
-

@@ -1,10 +1,10 @@
-from chip import Chip, PinName, BinaryBit
+from chip import PinName, Bit
 from clock import ClockedChip
 from dff import Dff
 from n2t.mux import Mux
 
 
-class Bit(ClockedChip):
+class BitRegister(ClockedChip):
     """Bit
     """
 
@@ -31,26 +31,28 @@ class Bit(ClockedChip):
 
 
 def test_bit(
-        chip: Bit, i: BinaryBit, load: BinaryBit,
-        expected_tick_out: BinaryBit, expected_tock_out: BinaryBit
+        chip: BitRegister, i: Bit, load: Bit,
+        expected_tick_out: Bit, expected_tock_out: Bit
 ):
-    chip.set(Bit.pin_in, i)
-    chip.set(Bit.pin_load, load)
+    chip.set(BitRegister.pin_in, i)
+    chip.set(BitRegister.pin_load, load)
     chip.tick()
     assert chip.plus
-    assert chip.output()[Bit.pin_out] == expected_tick_out
+    assert chip.output()[BitRegister.pin_out] == expected_tick_out
     chip.tock()
     assert not chip.plus
-    assert chip.output()[Bit.pin_out] == expected_tock_out
+    assert chip.output()[BitRegister.pin_out] == expected_tock_out
 
 
 def run_all_test_cases():
-    chip = Bit()
-    test_bit(chip, BinaryBit(0), BinaryBit(0), BinaryBit(0), BinaryBit(0))
-    test_bit(chip, BinaryBit(0), BinaryBit(1), BinaryBit(0), BinaryBit(0))
-    test_bit(chip, BinaryBit(1), BinaryBit(0), BinaryBit(0), BinaryBit(0))
-    test_bit(chip, BinaryBit(1), BinaryBit(1), BinaryBit(0), BinaryBit(1))
-    test_bit(chip, BinaryBit(0), BinaryBit(0), BinaryBit(1), BinaryBit(1))
+    chip = BitRegister()
+    test_bit(chip, Bit(0), Bit(0), Bit(0), Bit(0))
+    test_bit(chip, Bit(0), Bit(1), Bit(0), Bit(0))
+    test_bit(chip, Bit(1), Bit(0), Bit(0), Bit(0))
+    test_bit(chip, Bit(1), Bit(1), Bit(0), Bit(1))
+    test_bit(chip, Bit(0), Bit(0), Bit(1), Bit(1))
+    test_bit(chip, Bit(1), Bit(0), Bit(1), Bit(1))
+    test_bit(chip, Bit(0), Bit(1), Bit(1), Bit(0))
 
 
 if __name__ == '__main__':

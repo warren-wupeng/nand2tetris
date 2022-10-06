@@ -1,17 +1,15 @@
-from n2t.and_gate import And
-from n2t.chip import BinaryBit, Chip, PinName, Pins, Pin
-from n2t.nand_gate import Nand
-from n2t.not_gate import Not
+from n2t.chip import Bit, Chip, PinName
+from n2t.logic.nand_gate import Nand
+from n2t.logic.not_gate import Not
+from n2t.logic.unary import UnaryOperation
 
 
-class Or(Chip):
-    """Or Gate"""
-    pin_a = PinName('a')
-    pin_b = PinName('b')
-    pin_out = PinName('out')
-
-    in_pins = (pin_a, pin_b)
-    out_pins = (pin_out,)
+class Or(UnaryOperation):
+    """Or Gate
+    a or b = (not (not a)) or (not (not b))
+           = not (not a) and (not b)
+           = (not a) nand (not b)
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -32,13 +30,13 @@ class Or(Chip):
 
 
 def run_all_or_test_cases():
-    test_or(BinaryBit(0), BinaryBit(0), BinaryBit(0))
-    test_or(BinaryBit(0), BinaryBit(1), BinaryBit(1))
-    test_or(BinaryBit(1), BinaryBit(0), BinaryBit(1))
-    test_or(BinaryBit(1), BinaryBit(1), BinaryBit(1))
+    test_or(Bit(0), Bit(0), Bit(0))
+    test_or(Bit(0), Bit(1), Bit(1))
+    test_or(Bit(1), Bit(0), Bit(1))
+    test_or(Bit(1), Bit(1), Bit(1))
 
 
-def test_or(a: BinaryBit, b: BinaryBit, expected_out: BinaryBit):
+def test_or(a: Bit, b: Bit, expected_out: Bit):
     chip = Or()
     chip.set(Or.pin_a, a)
     chip.set(Or.pin_b, b)

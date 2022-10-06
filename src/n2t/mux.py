@@ -1,7 +1,7 @@
-from n2t.and_gate import And
-from n2t.chip import BinaryBit, Chip, PinName, Pins, Pin
-from n2t.not_gate import Not
-from n2t.or_gate import Or
+from n2t.chip import Bit, Chip, PinName
+from n2t.logic.and_gate import And
+from n2t.logic.not_gate import Not
+from n2t.logic.or_gate import Or
 
 
 class Mux(Chip):
@@ -36,7 +36,7 @@ class Mux(Chip):
         self.or_gate.eval()
 
 
-def test_mux(a: BinaryBit, b: BinaryBit, sel: BinaryBit, expected_out: BinaryBit):
+def test_mux(a: Bit, b: Bit, sel: Bit, expected_out: Bit):
     chip = Mux()
     chip.set(Mux.pin_a, a)
     chip.set(Mux.pin_b, b)
@@ -46,10 +46,10 @@ def test_mux(a: BinaryBit, b: BinaryBit, sel: BinaryBit, expected_out: BinaryBit
 
 
 def run_all_test_cases():
-    test_mux(a=BinaryBit(0), b=BinaryBit(1), sel=BinaryBit(0), expected_out=BinaryBit(0))
-    test_mux(a=BinaryBit(0), b=BinaryBit(1), sel=BinaryBit(1), expected_out=BinaryBit(1))
-    test_mux(a=BinaryBit(1), b=BinaryBit(0), sel=BinaryBit(1), expected_out=BinaryBit(0))
-    test_mux(a=BinaryBit(1), b=BinaryBit(0), sel=BinaryBit(0), expected_out=BinaryBit(1))
+    test_mux(a=Bit(0), b=Bit(1), sel=Bit(0), expected_out=Bit(0))
+    test_mux(a=Bit(0), b=Bit(1), sel=Bit(1), expected_out=Bit(1))
+    test_mux(a=Bit(1), b=Bit(0), sel=Bit(1), expected_out=Bit(0))
+    test_mux(a=Bit(1), b=Bit(0), sel=Bit(0), expected_out=Bit(1))
 
 
 if __name__ == '__main__':

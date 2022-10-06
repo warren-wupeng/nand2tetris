@@ -5,45 +5,51 @@ from typing import NewType, Any, Optional
 PinName = NewType('PinName', str)
 
 
-class BinaryBit:
+class Bit:
     def __init__(self, value: int = 0):
         assert value in (0, 1)
         self.value = value
 
     def __and__(self, other):
-        result = BinaryBit(self.value & other.value)
+        result = Bit(self.value & other.value)
         return result
 
     def __eq__(self, other):
         return self.value == other.value
 
     def __invert__(self):
-        return BinaryBit(0 if self.value else 1)
+        return Bit(0 if self.value else 1)
+
+    def __repr__(self):
+        return f'BinaryBit({self.value})'
 
 
 def test_bit_int():
-    assert BinaryBit(0) & BinaryBit(0) == BinaryBit(0)
-    assert BinaryBit(0) & BinaryBit(1) == BinaryBit(0)
-    assert BinaryBit(1) & BinaryBit(0) == BinaryBit(0)
-    assert BinaryBit(1) & BinaryBit(1) == BinaryBit(1)
+    assert Bit(0) & Bit(0) == Bit(0)
+    assert Bit(0) & Bit(1) == Bit(0)
+    assert Bit(1) & Bit(0) == Bit(0)
+    assert Bit(1) & Bit(1) == Bit(1)
 
 
 class Pin:
 
     def __init__(self, name: PinName):
         self.name = name
-        self._value: BinaryBit = BinaryBit()
+        self._value: Bit = Bit()
         self.wired_pins: list[tuple[Any, PinName]] = []
 
     @property
-    def value(self) -> BinaryBit:
+    def value(self) -> Bit:
         return self._value
 
     @value.setter
-    def value(self, value: BinaryBit):
+    def value(self, value: Bit):
         self._value = value
         for chip, pin_name in self.wired_pins:
             chip.set(pin_name, value)
+
+    def __repr__(self):
+        return f"Pin(name={self.name}, value={self.value})"
 
 
 class Pins:
@@ -65,8 +71,11 @@ class Pins:
         for pin in self._data.values():
             yield pin
 
-    def set(self, pin: PinName, value: BinaryBit):
+    def set(self, pin: PinName, value: Bit):
         self._data[pin].value = value
+
+    def __repr__(self):
+        return f'{[p for p in self]}'
 
 
 class PinNames:
@@ -84,7 +93,7 @@ class Chip(abc.ABC):
         all_pins = (Pin(x) for x in self.in_pins+self.out_pins)
         self.pins = Pins(*all_pins)
 
-    def set(self, pin_name: PinName, value: BinaryBit):
+    def set(self, pin_name: PinName, value: Bit):
         if pin := self.pins.get(pin_name):
             pin.value = value
         else:
@@ -99,8 +108,12 @@ class Chip(abc.ABC):
     def eval(self):
         raise NotImplementedError
 
-    def output(self) -> dict[PinName, BinaryBit]:
+    def output(self) -> dict[PinName, Bit]:
         return {p.name: p.value for p in self.pins}
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}' \
+               f'(in_pins={self.in_pins}, out_pins={self.out_pins})'
 
 
 if __name__ == '__main__':
