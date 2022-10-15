@@ -9,9 +9,10 @@ class Nand(UnaryOperation):
         super().__init__()
 
     def eval(self):
-        pin_a_value = self.pins[self.pin_a].value
-        pin_b_value = self.pins[self.pin_b].value
-        self.pins[self.pin_out].value = ~ (pin_a_value & pin_b_value)
+        pin_a_value = self.pin_values[self.pin_a.name]
+        pin_b_value = self.pin_values[self.pin_b.name]
+        self.set_pin(self.pin_out, ~ (pin_a_value & pin_b_value))
+
 
 
 def run_all_nand_test_cases():
@@ -23,10 +24,10 @@ def run_all_nand_test_cases():
 
 def test_nand(a: Bit, b: Bit, expected_out: Bit):
     chip = Nand()
-    chip.set(Nand.pin_a, a)
-    chip.set(Nand.pin_b, b)
+    chip.set_pin(Nand.pin_a, a)
+    chip.set_pin(Nand.pin_b, b)
     chip.eval()
-    assert chip.output()[Nand.pin_out] == expected_out
+    assert chip.output()[Nand.pin_out.name] == expected_out
 
 
 if __name__ == '__main__':

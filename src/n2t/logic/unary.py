@@ -1,12 +1,12 @@
 from abc import ABC
 
-from n2t.chip import Chip, PinName
+from n2t.chip import Chip, Pin
 
 
 class UnaryOperation(Chip, ABC):
-    pin_a = PinName('a')
-    pin_b = PinName('b')
-    pin_out = PinName('out')
+    pin_a = Pin('a')
+    pin_b = Pin('b')
+    pin_out = Pin('out')
 
-    in_pins: tuple[PinName] = (pin_a, pin_b)
-    out_pins: tuple[PinName] = (pin_out,)
+    IN = (pin_a, pin_b)
+    OUT = (pin_out,)

@@ -1,4 +1,4 @@
-from n2t.chip import Chip, Bit, PinName
+from n2t.chip import Chip, Bit, Pin
 from n2t.logic.nand_gate import Nand
 
 
@@ -6,19 +6,19 @@ class Not(Chip):
     """Not Gate
     not in = in nand in
     """
-    pin_in = PinName('in')
-    pin_out = PinName('out')
+    pin_in = Pin('in')
+    pin_out = Pin('out')
 
-    in_pins = (pin_in,)
-    out_pins = (pin_out,)
+    IN = (pin_in,)
+    OUT = (pin_out,)
 
     def __init__(self) -> None:
         super().__init__()
         self.nand = Nand()
 
-        self.wire(self.pin_in, self.nand, Nand.pin_a)
-        self.wire(self.pin_in, self.nand, Nand.pin_b)
-        self.nand.wire(Nand.pin_out, self, self.pin_out)
+        self.wire_pin(self.pin_in, self.nand, Nand.pin_a)
+        self.wire_pin(self.pin_in, self.nand, Nand.pin_b)
+        self.nand.wire_pin(Nand.pin_out, self, self.pin_out)
 
     def eval(self):
         self.nand.eval()
@@ -27,9 +27,10 @@ class Not(Chip):
 def test_not_gate(i: Bit, expected_out: Bit):
 
     chip = Not()
-    chip.set(Not.pin_in, i)
+    chip.set_pin(Not.pin_in, i)
     chip.eval()
-    assert chip.output()[Not.pin_out] == expected_out
+    out = chip.output()[Not.pin_out.name]
+    assert out == expected_out, f"{out}!={expected_out}"
 
 
 def run_not_gate_test_cases():

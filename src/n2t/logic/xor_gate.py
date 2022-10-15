@@ -1,4 +1,4 @@
-from n2t.chip import Chip, Bit, PinName
+from n2t.chip import Bit
 from n2t.logic.nand_gate import Nand
 from n2t.logic.not_gate import Not
 from n2t.logic.unary import UnaryOperation

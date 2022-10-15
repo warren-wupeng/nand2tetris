@@ -1,4 +1,4 @@
-from n2t.chip import Chip, Bit, PinName
+from n2t.chip import Bit
 from n2t.logic.not_gate import Not
 from n2t.logic.nand_gate import Nand
 from n2t.logic.unary import UnaryOperation
@@ -14,10 +14,10 @@ class And(UnaryOperation):
         self.nand = Nand()
         self.not_gate = Not()
 
-        self.wire(self.pin_a, self.nand, Nand.pin_a)
-        self.wire(self.pin_b, self.nand, Nand.pin_b)
-        self.nand.wire(Nand.pin_out, self.not_gate, Not.pin_in)
-        self.not_gate.wire(Not.pin_out, self, self.pin_out)
+        self.wire_pin(self.pin_a, self.nand, Nand.pin_a)
+        self.wire_pin(self.pin_b, self.nand, Nand.pin_b)
+        self.nand.wire_pin(Nand.pin_out, self.not_gate, Not.pin_in)
+        self.not_gate.wire_pin(Not.pin_out, self, self.pin_out)
 
     def eval(self):
         self.nand.eval()
@@ -26,10 +26,10 @@ class And(UnaryOperation):
 
 def test_and(a: Bit, b: Bit, expected_out: Bit):
     chip = And()
-    chip.set(And.pin_a, a)
-    chip.set(And.pin_b, b)
+    chip.set_pin(And.pin_a, a)
+    chip.set_pin(And.pin_b, b)
     chip.eval()
-    assert chip.output()[And.pin_out] == expected_out
+    assert chip.output()[And.pin_out.name] == expected_out
 
 
 def run_all_and_test_cases():

@@ -1,8 +1,5 @@
 import abc
-
-from typing import NewType, Any, Optional
-
-PinName = NewType('PinName', str)
+from typing import Any, Union
 
 
 class Bit:
@@ -21,7 +18,7 @@ class Bit:
         return Bit(0 if self.value else 1)
 
     def __repr__(self):
-        return f'BinaryBit({self.value})'
+        return f'Bit({self.value})'
 
 
 def test_bit_int():
@@ -31,90 +28,124 @@ def test_bit_int():
     assert Bit(1) & Bit(1) == Bit(1)
 
 
+class Bits:
+    def __init__(self, value: int = 0, size: int = 16):
+        assert value < int('1'*size, 2)
+        self.value = value
+        self.size = size
+
+    def __getitem__(self, index: int):
+        digit = (self.value & (1 << index)) >> index
+        return Bit(digit)
+
+    def __setitem__(self, index: int, bit: Bit):
+        if bit.value:
+            self.value = self.value | (1 << index)
+        else:
+            self.value = self.value & ~ (1 << index)
+
+
+def get_bit(value: int, size: int = 1):
+    if size == 1:
+        return Bit(value)
+    elif size == 16:
+        return Bits(value, 16)
+    else:
+        raise ValueError()
+
+
+def test_bit16():
+    assert Bits(0b1)[0] == Bit(1)
+    assert Bits(0b1)[1] == Bit(0)
+    bits = Bits(0b1)
+    bits[1] = Bit(1)
+    assert bits[1] == Bit(1)
+    bits[0] = Bit(0)
+    assert bits[0] == Bit(0)
+
+
 class Pin:
 
-    def __init__(self, name: PinName):
+    def __init__(self, name: str):
         self.name = name
-        self._value: Bit = Bit()
-        self.wired_pins: list[tuple[Any, PinName]] = []
-
-    @property
-    def value(self) -> Bit:
-        return self._value
-
-    @value.setter
-    def value(self, value: Bit):
-        self._value = value
-        for chip, pin_name in self.wired_pins:
-            chip.set(pin_name, value)
 
     def __repr__(self):
-        return f"Pin(name={self.name}, value={self.value})"
+        return f"Pin(name={self.name})"
 
 
-class Pins:
+class Bus:
+    def __init__(self, name: str, size: int = 16):
+        self.name = name
+        self.size = size
 
-    def __init__(self, *args: Pin):
-        self._data = {p.name: p for p in args}
-
-    def get(self, pin: PinName) -> Optional[Pin]:
-        return self._data.get(pin)
-
-    def __getitem__(self, pin: PinName) -> Pin:
-        result = self._data.get(pin)
-        if not result:
-            raise KeyError(f'{pin} not exit')
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            return tuple(
+                Pin(self.name+f"[{x}]") for x in range(item.start, item.stop)
+            )
+        elif isinstance(item, int):
+            assert 0 <= item < self.size
+            return Pin(self.name+f"[{item}]")
         else:
-            return result
+            raise ValueError(f"{item}")
 
     def __iter__(self):
-        for pin in self._data.values():
-            yield pin
-
-    def set(self, pin: PinName, value: Bit):
-        self._data[pin].value = value
+        for i in range(self.size):
+            yield Pin(self.name+f"[{i}]")
 
     def __repr__(self):
-        return f'{[p for p in self]}'
+        return f"Bus(name={self.name}, size={self.size})"
 
 
-class PinNames:
-    in_pins = ('a', 'b')
-    out_pins = ('out',)
+PinOrBus = Union[Pin, Bus]
 
 
 class Chip(abc.ABC):
 
-    in_pins: tuple[PinName]
-    out_pins: tuple[PinName]
-    pins: Pins
+    IN: tuple[PinOrBus]
+    OUT: tuple[PinOrBus]
 
     def __init__(self) -> None:
-        all_pins = (Pin(x) for x in self.in_pins+self.out_pins)
-        self.pins = Pins(*all_pins)
+        self.pin_values = dict()
+        self.pin_wires = dict()
 
-    def set(self, pin_name: PinName, value: Bit):
-        if pin := self.pins.get(pin_name):
-            pin.value = value
-        else:
-            raise ValueError('pin not found')
+        for pin_or_bus in self.IN + self.OUT:
+            if isinstance(pin_or_bus, Pin):
+                self.pin_values[pin_or_bus.name] = Bit()
+                self.pin_wires[pin_or_bus.name] = []
+            if isinstance(pin_or_bus, Bus):
+                for pin in pin_or_bus:
+                    self.pin_values[pin.name] = Bit()
+                    self.pin_wires[pin.name] = []
 
-    def wire(self, pin_name: PinName, chip: Any, to_pin: PinName):
-        if pin := self.pins.get(pin_name):
-            pin.wired_pins.append((chip, to_pin))
-        else:
-            raise ValueError('pin not found')
+    def set_pin(self, pin: Pin, value: Bit):
+        self.pin_values[pin.name] = value
+        for chip, pin in self.pin_wires[pin.name]:
+            chip.set_pin(pin, value)
+
+    def set_bus(self, bus: Bus, value: Bits):
+        assert bus.size == value.size
+        for i, pin in enumerate(bus):
+            self.set_pin(pin, value[i])
+
+    def wire_pin(self, pin: Pin, chip: Any, to_pin: Pin):
+        self.pin_wires[pin.name].append((chip, to_pin))
+
+    def wire_bus(self, bus: Bus, chip: Any, to_bus: Bus):
+        assert bus.size == to_bus.size
+        for i, pin in enumerate(bus):
+            self.pin_wires[pin].append((chip, to_bus[i]))
 
     def eval(self):
         raise NotImplementedError
 
-    def output(self) -> dict[PinName, Bit]:
-        return {p.name: p.value for p in self.pins}
+    def output(self) -> dict[str, Bit]:
+        return self.pin_values
 
     def __repr__(self):
-        return f'{self.__class__.__name__}' \
-               f'(in_pins={self.in_pins}, out_pins={self.out_pins})'
+        return f'{self.__class__.__name__}(IN={self.IN}, OUT={self.OUT})'
 
 
 if __name__ == '__main__':
     test_bit_int()
+    test_bit16()
