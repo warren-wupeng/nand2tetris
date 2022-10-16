@@ -18,10 +18,17 @@ class And16(Chip):
         for i, (bus_a_pin, bus_b_pin) in enumerate(zip(self.bus_a, self.bus_b)):
             self.wire_pin(bus_a_pin, self.parts[i], And.pin_a)
             self.wire_pin(bus_b_pin, self.parts[i], And.pin_b)
+            self.parts[i].wire_pin(And.pin_out, self, self.bus_out[i])
 
     def eval(self):
         for part in self.parts:
             part.eval()
+
+    def output(self) -> dict[str, Bits]:
+        out = Bits(int(
+            ''.join([str(self.pin_values[p.name].value) for p in self.bus_out]), 2
+        ))
+        return {'out': out}
 
 
 def test_and16(a: Bits, b: Bits, expected_out: Bits):
@@ -29,7 +36,8 @@ def test_and16(a: Bits, b: Bits, expected_out: Bits):
     chip.set_bus(And16.bus_a, a)
     chip.set_bus(And16.bus_b, b)
     chip.eval()
-    assert chip.output()[And.pin_out] == expected_out
+    result = chip.output()[And16.bus_out.name]
+    assert result == expected_out, f"{result}!={expected_out}"
 
 
 def run_all_test_cases():

@@ -34,9 +34,12 @@ def test_bit_int():
 
 class Bits:
     def __init__(self, value: int = 0, size: int = 16):
-        assert value < int('1'*size, 2)
+        assert value <= int('1'*size, 2)
         self.value = value
         self.size = size
+
+    def __eq__(self, other):
+        return self.value == other.value
 
     def __getitem__(self, index: int):
         digit = (self.value & (1 << index)) >> index
