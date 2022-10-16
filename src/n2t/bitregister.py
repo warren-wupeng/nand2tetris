@@ -37,10 +37,10 @@ def test_bit(
     chip.set(BitRegister.pin_in, i)
     chip.set(BitRegister.pin_load, load)
     chip.tick()
-    assert chip.plus
+    assert chip.clk
     assert chip.output()[BitRegister.pin_out] == expected_tick_out
     chip.tock()
-    assert not chip.plus
+    assert not chip.clk
     assert chip.output()[BitRegister.pin_out] == expected_tock_out
 
 

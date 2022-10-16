@@ -17,11 +17,15 @@ class Bit:
     def __invert__(self):
         return Bit(0 if self.value else 1)
 
+    def __bool__(self):
+        return bool(self.value)
+
     def __repr__(self):
         return f'Bit({self.value})'
 
 
 def test_bit_int():
+    assert bool(Bit(0)) is False
     assert Bit(0) & Bit(0) == Bit(0)
     assert Bit(0) & Bit(1) == Bit(0)
     assert Bit(1) & Bit(0) == Bit(0)
@@ -97,6 +101,8 @@ class Bus:
         return f"Bus(name={self.name}, size={self.size})"
 
 
+
+
 PinOrBus = Union[Pin, Bus]
 
 
@@ -143,7 +149,8 @@ class Chip(abc.ABC):
         return self.pin_values
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(IN={self.IN}, OUT={self.OUT})'
+        return f"{self.pin_values}"
+
 
 
 if __name__ == '__main__':
