@@ -1,6 +1,6 @@
-from n2t.bitregister import BitRegister
+from n2t.sequence.bitregister import BitRegister
 from n2t.chip import Bit, Bits, Bus, Pin
-from n2t.clock import ClockedChip
+from n2t.sequence.clock import ClockedChip
 
 
 class Register(ClockedChip):

@@ -1,4 +1,4 @@
-from n2t.clock import ClockedChip
+from n2t.sequence.clock import ClockedChip
 from n2t.chip import Bit, Pin
 from n2t.logic.nand_gate import Nand
 from n2t.logic.not_gate import Not
