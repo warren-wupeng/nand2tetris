@@ -33,7 +33,7 @@ class DMux(Chip):
         self.and_gate2.eval()
 
 
-def test_dmux(i: Bit, sel: Bit, expected_a_out: Bit, expected_b_out: Bit):
+def dmux_test_case(i: Bit, sel: Bit, expected_a_out: Bit, expected_b_out: Bit):
     chip = DMux()
     chip.set_pin(DMux.pin_in, i)
     chip.set_pin(DMux.pin_sel, sel)
@@ -43,10 +43,10 @@ def test_dmux(i: Bit, sel: Bit, expected_a_out: Bit, expected_b_out: Bit):
 
 
 def run_all_test_cases():
-    test_dmux(Bit(0), Bit(0), Bit(0), Bit(0))
-    test_dmux(Bit(0), Bit(1), Bit(0), Bit(0))
-    test_dmux(Bit(1), Bit(0), Bit(1), Bit(0))
-    test_dmux(Bit(1), Bit(1), Bit(0), Bit(1))
+    dmux_test_case(Bit(0), Bit(0), Bit(0), Bit(0))
+    dmux_test_case(Bit(0), Bit(1), Bit(0), Bit(0))
+    dmux_test_case(Bit(1), Bit(0), Bit(1), Bit(0))
+    dmux_test_case(Bit(1), Bit(1), Bit(0), Bit(1))
 
 
 if __name__ == '__main__':
