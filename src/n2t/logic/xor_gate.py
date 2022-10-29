@@ -21,18 +21,18 @@ class Xor(UnaryOperation):
         self.nand2 = Nand()
         self.nand3 = Nand()
 
-        self.wire(self.pin_a, self.not1, Not.pin_in)
-        self.wire(self.pin_b, self.not2, Not.pin_in)
-        self.wire(self.pin_a, self.nand2, Nand.pin_a)
-        self.wire(self.pin_b, self.nand1, Nand.pin_b)
+        self.wire_pin(self.pin_a, self.not1, Not.pin_in)
+        self.wire_pin(self.pin_b, self.not2, Not.pin_in)
+        self.wire_pin(self.pin_a, self.nand2, Nand.pin_a)
+        self.wire_pin(self.pin_b, self.nand1, Nand.pin_b)
 
-        self.not1.wire(Not.pin_out, self.nand1, Nand.pin_a)
-        self.not2.wire(Not.pin_out, self.nand2, Nand.pin_b)
+        self.not1.wire_pin(Not.pin_out, self.nand1, Nand.pin_a)
+        self.not2.wire_pin(Not.pin_out, self.nand2, Nand.pin_b)
 
-        self.nand1.wire(Nand.pin_out, self.nand3, Nand.pin_a)
-        self.nand2.wire(Nand.pin_out, self.nand3, Nand.pin_b)
+        self.nand1.wire_pin(Nand.pin_out, self.nand3, Nand.pin_a)
+        self.nand2.wire_pin(Nand.pin_out, self.nand3, Nand.pin_b)
 
-        self.nand3.wire(Nand.pin_out, self, self.pin_out)
+        self.nand3.wire_pin(Nand.pin_out, self, self.pin_out)
 
     def eval(self):
         self.not1.eval()
@@ -51,10 +51,10 @@ def run_all_xor_test_cases():
 
 def test_xor(a: Bit, b: Bit, expected_out: Bit):
     chip = Xor()
-    chip.set(Xor.pin_a, a)
-    chip.set(Xor.pin_b, b)
+    chip.set_pin(Xor.pin_a, a)
+    chip.set_pin(Xor.pin_b, b)
     chip.eval()
-    assert chip.output()[Xor.pin_out] == expected_out
+    assert chip.output()[Xor.pin_out.name] == expected_out
 
 
 if __name__ == '__main__':

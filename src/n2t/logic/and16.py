@@ -13,7 +13,7 @@ class And16(Chip):
 
     def __init__(self):
         super().__init__()
-        self.parts = (And(),)*16
+        self.parts = tuple(And() for _ in range(16))
 
         for i, (bus_a_pin, bus_b_pin) in enumerate(zip(self.bus_a, self.bus_b)):
             self.wire_pin(bus_a_pin, self.parts[i], And.pin_a)
@@ -25,10 +25,7 @@ class And16(Chip):
             part.eval()
 
     def output(self) -> dict[str, Bits]:
-        out = Bits(int(
-            ''.join([str(self.pin_values[p.name].value) for p in self.bus_out]), 2
-        ))
-        return {'out': out}
+        return {'out': self.bus_values[self.bus_out.name]}
 
 
 def test_and16(a: Bits, b: Bits, expected_out: Bits):
@@ -42,7 +39,10 @@ def test_and16(a: Bits, b: Bits, expected_out: Bits):
 
 def run_all_test_cases():
     test_and16(Bits(0), Bits(0), Bits(0))
+    test_and16(Bits(0), Bits(0b1), Bits(0))
     test_and16(Bits(0), Bits(0b1111111111111111), Bits(0))
+    test_and16(Bits(0b1), Bits(0b1111111111111111), Bits(1))
+    test_and16(Bits(0b1), Bits(0b1111111111111110), Bits(0))
     test_and16(
         Bits(0b1111111111111111), Bits(0b1111111111111111),
         Bits(0b1111111111111111)

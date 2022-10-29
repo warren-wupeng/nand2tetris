@@ -14,7 +14,6 @@ class Nand(UnaryOperation):
         self.set_pin(self.pin_out, ~ (pin_a_value & pin_b_value))
 
 
-
 def run_all_nand_test_cases():
     test_nand(Bit(0), Bit(0), Bit(1))
     test_nand(Bit(0), Bit(1), Bit(1))

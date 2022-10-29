@@ -23,11 +23,11 @@ class ClockedChip(Chip, ABC):
 
     def tick(self):
         # pass
-        # assert not self.clk
+        assert not self.clk
         self.clk = ~ self.clk
 
     def tock(self):
-        # assert self.clk
+        assert self.clk
         self.time += 1
         self.eval()
         self.clk = ~ self.clk

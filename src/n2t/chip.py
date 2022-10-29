@@ -1,4 +1,5 @@
 import abc
+import re
 from typing import Any, Union
 
 
@@ -24,12 +25,16 @@ class Bit:
         return f'Bit({self.value})'
 
 
-def test_bit_int():
+def test_bit():
     assert bool(Bit(0)) is False
     assert Bit(0) & Bit(0) == Bit(0)
     assert Bit(0) & Bit(1) == Bit(0)
     assert Bit(1) & Bit(0) == Bit(0)
     assert Bit(1) & Bit(1) == Bit(1)
+    assert Bit(1) == ~ Bit(0)
+    assert Bit(0) == ~ Bit(1)
+    assert str(Bit(0)) == 'Bit(0)'
+    assert str(Bit(1)) == 'Bit(1)'
 
 
 class Bits:
@@ -39,7 +44,8 @@ class Bits:
         self.size = size
 
     def __eq__(self, other):
-        return self.value == other.value
+
+        return isinstance(other, Bits) and self.value == other.value
 
     def __getitem__(self, index: int):
         digit = (self.value & (1 << index)) >> index
@@ -51,17 +57,13 @@ class Bits:
         else:
             self.value = self.value & ~ (1 << index)
 
-
-def get_bit(value: int, size: int = 1):
-    if size == 1:
-        return Bit(value)
-    elif size == 16:
-        return Bits(value, 16)
-    else:
-        raise ValueError()
+    def __repr__(self):
+        return f'Bits({self.value:0{self.size}b})'
 
 
-def test_bit16():
+def test_bits():
+    assert Bits(0) == Bits(0)
+    assert Bits(1) == Bits(1)
     assert Bits(0b1)[0] == Bit(1)
     assert Bits(0b1)[1] == Bit(0)
     bits = Bits(0b1)
@@ -69,6 +71,9 @@ def test_bit16():
     assert bits[1] == Bit(1)
     bits[0] = Bit(0)
     assert bits[0] == Bit(0)
+    assert str(Bits(0)) == "Bits(0000000000000000)", str(Bits(0))
+    assert str(Bits(1)) == "Bits(0000000000000001)"
+    assert str(Bits(2)) == "Bits(0000000000000010)"
 
 
 class Pin:
@@ -77,7 +82,14 @@ class Pin:
         self.name = name
 
     def __repr__(self):
-        return f"Pin(name={self.name})"
+        return f"Pin('{self.name}')"
+
+    def __eq__(self, other):
+        return isinstance(other, Pin) and self.name == other.name
+
+
+def test_pin():
+    assert str(Pin('a')) == "Pin('a')"
 
 
 class Bus:
@@ -101,9 +113,13 @@ class Bus:
             yield Pin(self.name+f"[{i}]")
 
     def __repr__(self):
-        return f"Bus(name={self.name}, size={self.size})"
+        return f"Bus('{self.name}', {self.size})"
 
 
+def test_bus():
+    assert Bus('a')[0] == Pin('a[0]')
+    assert Bus('a')[1] == Pin('a[1]')
+    assert str(Bus('a')) == "Bus('a', 16)"
 
 
 PinOrBus = Union[Pin, Bus]
@@ -117,25 +133,37 @@ class Chip(abc.ABC):
     def __init__(self) -> None:
         self.pin_values = dict()
         self.pin_wires = dict()
+        self.bus_values = dict()
 
         for pin_or_bus in self.IN + self.OUT:
             if isinstance(pin_or_bus, Pin):
                 self.pin_values[pin_or_bus.name] = Bit()
                 self.pin_wires[pin_or_bus.name] = []
             if isinstance(pin_or_bus, Bus):
+                self.bus_values[pin_or_bus.name] = Bits()
                 for pin in pin_or_bus:
-                    self.pin_values[pin.name] = Bit()
                     self.pin_wires[pin.name] = []
 
     def set_pin(self, pin: Pin, value: Bit):
-        self.pin_values[pin.name] = value
+
+        if pin.name in self.pin_values:
+
+            self.pin_values[pin.name] = value
+
+        elif m := re.match(r"([a-z]+)\[(\d+)\]", pin.name):
+            self.bus_values[m.groups()[0]][int(m.groups()[1])] = value
+        else:
+            raise KeyError(f"{pin=}")
+
         for chip, pin in self.pin_wires[pin.name]:
             chip.set_pin(pin, value)
 
     def set_bus(self, bus: Bus, value: Bits):
         assert bus.size == value.size
-        for i, pin in enumerate(bus):
-            self.set_pin(pin, value[i])
+        self.bus_values[bus.name] = value
+        for index, pin in enumerate(bus):
+            for chip, to_pin in self.pin_wires[pin.name]:
+                chip.set_pin(to_pin, value[index])
 
     def wire_pin(self, pin: Pin, chip: Any, to_pin: Pin):
         self.pin_wires[pin.name].append((chip, to_pin))
@@ -149,13 +177,14 @@ class Chip(abc.ABC):
         raise NotImplementedError
 
     def output(self) -> dict[str, Bit]:
-        return self.pin_values
+        return self.pin_values | self.bus_values
 
     def __repr__(self):
-        return f"{self.pin_values}"
-
+        return f"{self.pin_values | self.bus_values}"
 
 
 if __name__ == '__main__':
-    test_bit_int()
-    test_bit16()
+    test_bit()
+    test_bits()
+    test_pin()
+    test_bus()
