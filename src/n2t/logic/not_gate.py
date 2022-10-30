@@ -1,4 +1,5 @@
-from n2t.chip import Chip, Bit, Pin
+from n2t.chip import Chip, Pin
+from n2t.bit import Bit
 from n2t.logic.nand_gate import Nand
 
 

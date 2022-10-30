@@ -1,5 +1,5 @@
 from n2t.logic.unary import UnaryOperation
-from n2t.chip import Bit
+from n2t.bit import Bit
 
 
 class Nand(UnaryOperation):
@@ -15,13 +15,13 @@ class Nand(UnaryOperation):
 
 
 def run_all_nand_test_cases():
-    test_nand(Bit(0), Bit(0), Bit(1))
-    test_nand(Bit(0), Bit(1), Bit(1))
-    test_nand(Bit(1), Bit(0), Bit(1))
-    test_nand(Bit(1), Bit(1), Bit(0))
+    nand_test_case(Bit(0), Bit(0), Bit(1))
+    nand_test_case(Bit(0), Bit(1), Bit(1))
+    nand_test_case(Bit(1), Bit(0), Bit(1))
+    nand_test_case(Bit(1), Bit(1), Bit(0))
 
 
-def test_nand(a: Bit, b: Bit, expected_out: Bit):
+def nand_test_case(a: Bit, b: Bit, expected_out: Bit):
     chip = Nand()
     chip.set_pin(Nand.pin_a, a)
     chip.set_pin(Nand.pin_b, b)

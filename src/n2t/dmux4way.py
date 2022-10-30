@@ -1,4 +1,5 @@
-from n2t.chip import Bit, Bits, Chip, Pin, Bus
+from n2t.chip import Bits, Chip, Pin, Bus
+from n2t.bit import Bit
 from n2t.dmux import DMux
 
 

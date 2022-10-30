@@ -1,4 +1,5 @@
-from n2t.chip import Bit, Chip, Pin
+from n2t.chip import Chip, Pin
+from n2t.bit import Bit
 from n2t.logic.and_gate import And
 from n2t.logic.not_gate import Not
 

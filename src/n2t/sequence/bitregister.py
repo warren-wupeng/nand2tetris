@@ -1,4 +1,5 @@
-from n2t.chip import Pin, Bit
+from n2t.chip import Pin
+from n2t.bit import Bit
 from n2t.sequence.clock import ClockedChip
 from n2t.sequence.dff import Dff
 from n2t.mux import Mux

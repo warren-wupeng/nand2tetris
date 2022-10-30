@@ -1,6 +1,7 @@
 from abc import ABC
 
-from n2t.chip import Chip, Bit, Pin
+from n2t.chip import Chip, Pin
+from n2t.bit import Bit
 
 
 class ClockedChip(Chip, ABC):

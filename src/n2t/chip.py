@@ -1,40 +1,9 @@
 import abc
 import re
 from typing import Any, Union
+import unittest
 
-
-class Bit:
-    def __init__(self, value: int = 0):
-        assert value in (0, 1)
-        self.value = value
-
-    def __and__(self, other):
-        result = Bit(self.value & other.value)
-        return result
-
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __invert__(self):
-        return Bit(0 if self.value else 1)
-
-    def __bool__(self):
-        return bool(self.value)
-
-    def __repr__(self):
-        return f'Bit({self.value})'
-
-
-def test_bit():
-    assert bool(Bit(0)) is False
-    assert Bit(0) & Bit(0) == Bit(0)
-    assert Bit(0) & Bit(1) == Bit(0)
-    assert Bit(1) & Bit(0) == Bit(0)
-    assert Bit(1) & Bit(1) == Bit(1)
-    assert Bit(1) == ~ Bit(0)
-    assert Bit(0) == ~ Bit(1)
-    assert str(Bit(0)) == 'Bit(0)'
-    assert str(Bit(1)) == 'Bit(1)'
+from n2t.bit import Bit
 
 
 class Bits:
@@ -184,7 +153,7 @@ class Chip(abc.ABC):
 
 
 if __name__ == '__main__':
-    test_bit()
     test_bits()
     test_pin()
     test_bus()
+    unittest.main()
