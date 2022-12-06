@@ -8,7 +8,8 @@ from n2t.bit import Bit
 
 class Bits:
     def __init__(self, value: int = 0, size: int = 16):
-        assert value <= int('1'*size, 2)
+        if value < 0 or value > int('1'*size, 2):
+            raise ValueError(f"{value}")
         self.value = value
         self.size = size
 
@@ -28,6 +29,13 @@ class Bits:
 
     def __repr__(self):
         return f'Bits({self.value:0{self.size}b})'
+
+
+class TestBits(unittest.TestCase):
+
+    def test_should_not_accept_negative_value(self):
+        with self.assertRaises(ValueError):
+            Bits(-1)
 
 
 def test_bits():

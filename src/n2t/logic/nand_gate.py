@@ -1,3 +1,5 @@
+import unittest
+
 from n2t.logic.unary import UnaryOperation
 from n2t.bit import Bit
 
@@ -14,20 +16,27 @@ class Nand(UnaryOperation):
         self.set_pin(self.pin_out, ~ (pin_a_value & pin_b_value))
 
 
-def run_all_nand_test_cases():
-    nand_test_case(Bit(0), Bit(0), Bit(1))
-    nand_test_case(Bit(0), Bit(1), Bit(1))
-    nand_test_case(Bit(1), Bit(0), Bit(1))
-    nand_test_case(Bit(1), Bit(1), Bit(0))
+class TestNand(unittest.TestCase):
 
+    def test_should_output_1_given_0_and_0(self):
+        self.nand_test_case(Bit(0), Bit(0), Bit(1))
 
-def nand_test_case(a: Bit, b: Bit, expected_out: Bit):
-    chip = Nand()
-    chip.set_pin(Nand.pin_a, a)
-    chip.set_pin(Nand.pin_b, b)
-    chip.eval()
-    assert chip.output()[Nand.pin_out.name] == expected_out
+    def test_should_output_1_given_0_and_1(self):
+        self.nand_test_case(Bit(0), Bit(1), Bit(1))
+
+    def test_should_output_1_given_1_and_0(self):
+        self.nand_test_case(Bit(1), Bit(0), Bit(1))
+
+    def test_should_output_0_given_1_and_1(self):
+        self.nand_test_case(Bit(1), Bit(1), Bit(0))
+
+    def nand_test_case(self, a: Bit, b: Bit, expected_out: Bit):
+        chip = Nand()
+        chip.set_pin(Nand.pin_a, a)
+        chip.set_pin(Nand.pin_b, b)
+        chip.eval()
+        self.assertEqual(chip.output()[Nand.pin_out.name], expected_out)
 
 
 if __name__ == '__main__':
-    run_all_nand_test_cases()
+    unittest.main()
