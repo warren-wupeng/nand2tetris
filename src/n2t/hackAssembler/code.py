@@ -33,6 +33,17 @@ class Code:
         "D|M": "1010101",
     }
 
+    _jumpTable = {
+        None: "000",
+        "JGT": "001",
+        "JEQ": "010",
+        "JGE": "011",
+        "JLT": "100",
+        "JNE": "101",
+        "JLE": "110",
+        "JMP": "111",
+    }
+
     @classmethod
     def dest(cls, word: Union[str, None]) -> str:
         if not word:
@@ -41,8 +52,15 @@ class Code:
         return "".join([str(int(b)) for b in bits])
 
     @classmethod
-    def comp(cls, word: Union[str, None]) -> str:
+    def comp(cls, word: str) -> str:
         if result := cls._compTable.get(word):
+            return result
+        else:
+            raise cls.InvalidInstruction(word)
+
+    @classmethod
+    def jump(cls, word: Union[str, None]) -> str:
+        if result := cls._jumpTable.get(word):
             return result
         else:
             raise cls.InvalidInstruction(word)
@@ -90,6 +108,16 @@ class TestCode(unittest.TestCase):
         self.assertEqual("1000000", Code.comp("D&M"))
         self.assertEqual("0010101", Code.comp("D|A"))
         self.assertEqual("1010101", Code.comp("D|M"))
+
+    def test_jump(self):
+        self.assertEqual("000", Code.jump(None))
+        self.assertEqual("001", Code.jump("JGT"))
+        self.assertEqual("010", Code.jump("JEQ"))
+        self.assertEqual("011", Code.jump("JGE"))
+        self.assertEqual("100", Code.jump("JLT"))
+        self.assertEqual("101", Code.jump("JNE"))
+        self.assertEqual("110", Code.jump("JLE"))
+        self.assertEqual("111", Code.jump("JMP"))
 
 
 if __name__ == "__main__":
