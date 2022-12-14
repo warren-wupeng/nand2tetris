@@ -22,7 +22,7 @@ class Parser:
 
     @property
     def hasMoreLines(self):
-        return self.currentInstructionIndex < len(self.instructions) - 1
+        return self.currentInstructionIndex < len(self.instructions)
 
     def advance(self):
         self.currentInstructionIndex += 1
