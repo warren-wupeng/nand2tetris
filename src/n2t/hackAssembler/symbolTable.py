@@ -4,10 +4,11 @@ import unittest
 class SymbolTable:
 
     def __init__(self):
-        self._symbol2Address = dict()
-        self._address2symbol = dict()
-        for i in range(16):
-            self.addEntry("R"+str(i), i)
+        self._symbol2Address = {"R"+str(i): i for i in range(16)} | {
+            "SCREEN": 16384, "KBD": 24576,
+            "SP": 0, "LCL": 1, "ARG": 2, "THIS": 3, "THAT": 4,
+        }
+        self.nextVarAddress = 16
 
     def contains(self, symbol: str) -> bool:
         result = symbol in self._symbol2Address
@@ -16,7 +17,9 @@ class SymbolTable:
     def addEntry(self, symbol: str, address: int):
         # assert symbol not in self._symbol2Address
         self._symbol2Address[symbol] = address
-        self._address2symbol[address] = symbol
+        if address == self.nextVarAddress:
+            self.nextVarAddress += 1
+
 
     def getAddress(self, symbol: str) -> int:
         result = self._symbol2Address.get(symbol)

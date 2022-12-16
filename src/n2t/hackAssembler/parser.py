@@ -15,7 +15,7 @@ class Parser:
                     continue
 
                 self.instructions.append(
-                    Instruction.create(line.strip().removesuffix('\n'))
+                    Instruction.create(line.strip().split()[0])
                 )
 
         self.currentInstructionIndex = 0

@@ -20,6 +20,9 @@ class Instruction:
     def __init__(self, ins: str):
         self.ins = ins
 
+    def __repr__(self):
+        return self.ins
+
     @property
     def type(self):
         raise NotImplementedError
@@ -90,11 +93,15 @@ class CInstruction(Instruction):
 
     @property
     def dest(self):
-        return self.ins[0]
+        if "=" in self.ins:
+            return self.ins.split("=")[0]
 
     @property
     def comp(self):
-        result = self.ins.split(';')[0][2:]
+        if "=" in self.ins:
+            result = self.ins.split('=')[1].split(";")[0]
+        else:
+            result = self.ins.split(';')[0]
         return result
 
     @property
