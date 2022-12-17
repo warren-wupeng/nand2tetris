@@ -15,7 +15,7 @@ def compile_asm(file: str) -> list[str]:
     for ins in parser.instructions:
         if ins.type == InstructionTypes.L_INSTRUCTION:
             if not symbolTable.contains(ins.symbol):
-                symbolTable.addEntry(ins.symbol, n+1)
+                symbolTable.addEntry(ins.symbol, n)
         else:
             n += 1
     #
@@ -29,7 +29,8 @@ def compile_asm(file: str) -> list[str]:
                 address = symbolTable.getAddress(parser.symbol)
 
             binaryCodes.append(f"{address:016b}")
-        else:
+        elif parser.instructionType == InstructionTypes.C_INSTRUCTION:
+
             comp = Code.comp(parser.comp)
             dest = Code.dest(parser.dest)
             jump = Code.jump(parser.jump)
@@ -55,6 +56,30 @@ class TestCompileAsm(unittest.TestCase):
         ])
 
     def test_max(self):
+        path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/max/max.asm'
+        result = compile_asm(path)
+
+        self.assertEqual(result, [
+            "0000000000000000",
+            "1111110000010000",
+            "0000000000000001",
+            "1111010011010000",
+            "0000000000001010",
+            "1110001100000001",
+            "0000000000000001",
+            "1111110000010000",
+            "0000000000001100",
+            "1110101010000111",
+            "0000000000000000",
+            "1111110000010000",
+            "0000000000000010",
+            "1110001100001000",
+            "0000000000001110",
+            "1110101010000111",
+
+        ])
+
+    def test_max_l(self):
         path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/max/maxL.asm'
         result = compile_asm(path)
 
