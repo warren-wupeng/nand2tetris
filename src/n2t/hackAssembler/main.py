@@ -46,6 +46,7 @@ class TestCompileAsm(unittest.TestCase):
         path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/add/Add.asm'
         result = compile_asm(path)
 
+
         self.assertEqual(result, [
             "0000000000000010",
             "1110110000010000",
@@ -103,7 +104,21 @@ class TestCompileAsm(unittest.TestCase):
 
         ])
 
+    def test_rect_l(self):
+        expected = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect' \
+                   '/RectL.hack'
+        expected_codes = []
+        with open(expected, 'r') as file:
+            for l in file:
+                expected_codes.append(l.removesuffix('\n'))
+        path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect/RectL.asm'
+        result = compile_asm(path)
+
+        self.assertEqual(result, expected_codes)
+
 
 if __name__ == "__main__":
-    # compile_asm(sys.argv[1])
+    # codes = compile_asm(sys.argv[1])
+    # target = sys.argv[1].replace('.asm', '.hack')
+    # with open(target)
     unittest.main()
