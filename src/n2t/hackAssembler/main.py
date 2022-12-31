@@ -26,6 +26,9 @@ def compile_asm(file: str) -> list[str]:
             if parser.symbol[0] in "1234567890":
                 address = int(parser.symbol)
             else:
+                if not symbolTable.contains(parser.symbol):
+                    symbolTable.addEntry(
+                        parser.symbol, symbolTable.nextVarAddress)
                 address = symbolTable.getAddress(parser.symbol)
 
             binaryCodes.append(f"{address:016b}")
@@ -104,6 +107,18 @@ class TestCompileAsm(unittest.TestCase):
 
         ])
 
+    def test_rect(self):
+        expected = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect' \
+                   '/RectL.hack'
+        expected_codes = []
+        with open(expected, 'r') as file:
+            for l in file:
+                expected_codes.append(l.removesuffix('\n'))
+        path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect/Rect.asm'
+        result = compile_asm(path)
+
+        self.assertEqual(result, expected_codes)
+
     def test_rect_l(self):
         expected = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect' \
                    '/RectL.hack'
@@ -112,6 +127,30 @@ class TestCompileAsm(unittest.TestCase):
             for l in file:
                 expected_codes.append(l.removesuffix('\n'))
         path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/rect/RectL.asm'
+        result = compile_asm(path)
+
+        self.assertEqual(result, expected_codes)
+
+    def test_pong_l(self):
+        expected = '/Users/wupeng/projects/nand2tetris/src/hdl/06/pong' \
+                   '/PongL.hack'
+        expected_codes = []
+        with open(expected, 'r') as file:
+            for l in file:
+                expected_codes.append(l.removesuffix('\n'))
+        path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/pong/PongL.asm'
+        result = compile_asm(path)
+
+        self.assertEqual(result, expected_codes)
+
+    def test_pong(self):
+        expected = '/Users/wupeng/projects/nand2tetris/src/hdl/06/pong' \
+                   '/PongL.hack'
+        expected_codes = []
+        with open(expected, 'r') as file:
+            for l in file:
+                expected_codes.append(l.removesuffix('\n'))
+        path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/pong/Pong.asm'
         result = compile_asm(path)
 
         self.assertEqual(result, expected_codes)
