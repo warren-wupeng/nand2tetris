@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-from .symbolTable import SymbolTable
+from n2t.hackAssembler.symbolTable import SymbolTable
 from n2t.hackAssembler.instruction import InstructionTypes
 from .parser import Parser
 from .code import Code
@@ -41,6 +41,13 @@ def compile_asm(file: str) -> list[str]:
         parser.advance()
 
     return binaryCodes
+
+
+def write2file(codes: list[str], srcFile: str):
+    targetFile = srcFile.replace('.asm', '.hack')
+    with open(targetFile, 'w') as tf:
+        for code in codes:
+            tf.write(code+'\n')
 
 
 class TestCompileAsm(unittest.TestCase):
@@ -152,12 +159,13 @@ class TestCompileAsm(unittest.TestCase):
                 expected_codes.append(l.removesuffix('\n'))
         path = '/Users/wupeng/projects/nand2tetris/src/hdl/06/pong/Pong.asm'
         result = compile_asm(path)
+        write2file(result, srcFile=path)
 
         self.assertEqual(result, expected_codes)
 
 
 if __name__ == "__main__":
-    # codes = compile_asm(sys.argv[1])
-    # target = sys.argv[1].replace('.asm', '.hack')
-    # with open(target)
-    unittest.main()
+    print(sys.argv)
+    # codes = compile_asm(sys.argv[2])
+    # write2file(codes, sys.argv[2])
+    # unittest.main()
