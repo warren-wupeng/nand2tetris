@@ -23,7 +23,7 @@ class CodeWriter:
                     '// D = i'
                     f'  @{index}\n',
                     '  D=A\n',
-                    f'// RAM[SP]={index}\n',
+                    f'// RAM[SP]=D\n',
                     '  @SP\n',
                     '  A=M\n',
                     '  M=D\n',
