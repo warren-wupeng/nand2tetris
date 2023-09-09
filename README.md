@@ -1,7 +1,22 @@
 # nand2tetris
-build computer start from nand gate
+build computer start from nand gate with python
 
-completed chips
+## working on
+vm_translator
+
+## completed projects
+
+### project 06
+hackAssembler 
+
+### project 05
+Computer.hdl
+CPU.hdl
+Memory.hdl
+
+### project 04
+Fill.asm
+Mult.asm
 
 ## project 03
 RAM8
