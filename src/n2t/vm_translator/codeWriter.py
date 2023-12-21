@@ -18,21 +18,42 @@ class CodeWriter:
             raise ValueError('only push and pop command are allowed')
         match command, segment:
             case CommandType.C_PUSH, 'constant':
-                self._f.writelines([
+                instructions = self.instructinsForPushConstant(command, segment, index)
+
+            case CommandType.C_PUSH, _:
+                instructions = self.instructionsForPush(segment, index)
+
+            case CommandType.C_POP, _:
+                instructions = self.instructionsForPop(command, segment, index)
+
+            case _:
+                raise ValueError('invalid command')
+
+        self._f.writelines(instructions)
+
+    def instructionsForPop(self, command, segment, index):
+        return [
                     f'// {command.value} {segment} {index}\n',
-                    '// D = i'
+                    f'// addr = {segment} + {index}\n',
                     f'  @{index}\n',
                     '  D=A\n',
-                    f'// RAM[SP]=D\n',
+                    f'  @{segment}\n',
+                    '  D=D+M\n',
+                    '  @addr\n',
+                    '  M=D\n',
+                    '// SP--\n',
                     '  @SP\n',
+                    '  M=M-1\n',
+                    '// RAM[addr]=RAM[SP]\n',
+                    '  A=M\n',
+                    '  D=M\n',
+                    '  @addr\n',
                     '  A=M\n',
                     '  M=D\n',
-                    '// SP++\n',
-                    '  @SP\n',
-                    '  M=M+1\n',
-                ])
-            case CommandType.C_PUSH, _:
-                self._f.writelines([
+                ]
+
+    def instructionsForPush(self, segment, index):
+        return [
                     f'// push {segment} {index}\n',
                     f'// addr = {segment} + {index}\n',
                     f'  @{index}\n',
@@ -50,24 +71,19 @@ class CodeWriter:
                     '// SP++\n',
                     '  @SP\n',
                     '  M=M+1\n',
-                ])
-            case CommandType.C_POP, _:
-                self._f.writelines([
+                ]
+
+    def instructinsForPushConstant(self, command, segment, index):
+        return [
                     f'// {command.value} {segment} {index}\n',
-                    f'// addr = {segment} + {index}\n',
+                    '// D = i',
                     f'  @{index}\n',
                     '  D=A\n',
-                    '  @local\n',
-                    '  D=D+M\n',
-                    '  @addr\n',
-                    '  M=D\n',
-                    '// SP--\n',
+                    f'// RAM[SP]=D\n',
                     '  @SP\n',
-                    '  M=M-1\n',
-                    '// RAM[addr]=RAM[SP]\n',
-                    '  A=M\n',
-                    '  D=M\n',
-                    '  @addr\n',
                     '  A=M\n',
                     '  M=D\n',
-                ])
+                    '// SP++\n',
+                    '  @SP\n',
+                    '  M=M+1\n',
+                ]

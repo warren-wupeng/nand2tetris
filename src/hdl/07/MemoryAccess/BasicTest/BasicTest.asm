@@ -1,8 +1,8 @@
-// pop argument 2
-// addr = argument + 2
+// pop this 2
+// addr = this + 2
   @2
   D=A
-  @local
+  @this
   D=D+M
   @addr
   M=D
